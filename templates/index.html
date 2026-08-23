@@ -1,0 +1,2748 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Electricity AI</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            min-height: 100vh;
+
+            color: white;
+
+            background:
+
+                radial-gradient(
+                    circle at top left,
+                    #172554,
+                    transparent 35%
+                ),
+
+                radial-gradient(
+                    circle at bottom right,
+                    #312e81,
+                    transparent 35%
+                ),
+
+                linear-gradient(
+                    135deg,
+                    #020617,
+                    #0f172a 50%,
+                    #111827
+                );
+        }
+
+
+        .container {
+
+            width: 94%;
+
+            max-width: 1400px;
+
+            margin: auto;
+
+            padding:
+                30px 0 50px;
+        }
+
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        header {
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items: center;
+
+            margin-bottom: 30px;
+        }
+
+
+        .brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+        }
+
+
+        .logo {
+
+            width: 58px;
+
+            height: 58px;
+
+            border-radius: 18px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 30px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #facc15,
+                    #f97316
+                );
+
+            box-shadow:
+                0 0 30px
+                rgba(250,204,21,.35);
+        }
+
+
+        .brand h1 {
+
+            font-size: 28px;
+
+            letter-spacing: .5px;
+        }
+
+
+        .brand p {
+
+            color: #94a3b8;
+
+            margin-top: 5px;
+        }
+
+
+        .status {
+
+            padding:
+                12px 18px;
+
+            border-radius: 30px;
+
+            background:
+                rgba(34,197,94,.12);
+
+            border:
+                1px solid
+                rgba(34,197,94,.5);
+
+            color: #86efac;
+
+            font-weight: bold;
+        }
+
+
+        .dot {
+
+            display: inline-block;
+
+            width: 10px;
+
+            height: 10px;
+
+            border-radius: 50%;
+
+            background: #22c55e;
+
+            margin-right: 8px;
+
+            box-shadow:
+                0 0 15px #22c55e;
+        }
+
+
+        /* =====================================================
+           MAIN CARDS
+        ===================================================== */
+
+        .cards {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4,1fr);
+
+            gap: 18px;
+        }
+
+
+        .card {
+
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 24px;
+
+            border-radius: 22px;
+
+            min-height: 170px;
+
+            background:
+                rgba(15,23,42,.75);
+
+            border:
+                1px solid
+                rgba(255,255,255,.08);
+
+            box-shadow:
+                0 15px 40px
+                rgba(0,0,0,.25);
+
+            backdrop-filter:
+                blur(15px);
+        }
+
+
+        .card::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 100px;
+
+            height: 100px;
+
+            right: -30px;
+
+            bottom: -30px;
+
+            border-radius: 50%;
+
+            background:
+                var(--glow);
+
+            filter: blur(35px);
+
+            opacity: .5;
+        }
+
+
+        .power {
+
+            --glow: #f59e0b;
+
+            border-top:
+                3px solid #f59e0b;
+        }
+
+
+        .prediction {
+
+            --glow: #a855f7;
+
+            border-top:
+                3px solid #a855f7;
+        }
+
+
+        .voltage {
+
+            --glow: #38bdf8;
+
+            border-top:
+                3px solid #38bdf8;
+        }
+
+
+        .current {
+
+            --glow: #22c55e;
+
+            border-top:
+                3px solid #22c55e;
+        }
+
+
+        .card-title {
+
+            color: #94a3b8;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+        }
+
+
+        .icon {
+
+            font-size: 30px;
+
+            margin:
+                15px 0 8px;
+        }
+
+
+        .value {
+
+            font-size: 34px;
+
+            font-weight: bold;
+        }
+
+
+        .unit {
+
+            color: #94a3b8;
+
+            font-size: 15px;
+
+            margin-left: 5px;
+        }
+
+
+        /* =====================================================
+           PANELS
+        ===================================================== */
+
+        .panel {
+
+            margin-top: 22px;
+
+            padding: 25px;
+
+            border-radius: 22px;
+
+            background:
+                rgba(15,23,42,.78);
+
+            border:
+                1px solid
+                rgba(255,255,255,.08);
+
+            box-shadow:
+                0 15px 40px
+                rgba(0,0,0,.25);
+        }
+
+
+        .panel-header {
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items: center;
+
+            margin-bottom: 20px;
+        }
+
+
+        .panel-header h2 {
+
+            font-size: 20px;
+        }
+
+
+        .live-label {
+
+            color: #4ade80;
+
+            font-size: 13px;
+
+            margin-top: 5px;
+        }
+
+
+        /* =====================================================
+           LIVE CHART
+        ===================================================== */
+
+        .chart-box {
+
+            height: 350px;
+        }
+
+
+        /* =====================================================
+           PERFORMANCE
+        ===================================================== */
+
+        .performance-panel {
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    rgba(30,27,75,.85),
+                    rgba(15,23,42,.85)
+                );
+        }
+
+
+        .performance-badge {
+
+            padding:
+                9px 15px;
+
+            border-radius: 20px;
+
+            background:
+                rgba(168,85,247,.15);
+
+            border:
+                1px solid
+                rgba(168,85,247,.4);
+
+            color: #d8b4fe;
+
+            font-size: 13px;
+
+            font-weight: bold;
+        }
+
+
+        .performance-cards {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(6,1fr);
+
+            gap: 15px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .performance-card {
+
+            position: relative;
+
+            padding: 20px;
+
+            border-radius: 18px;
+
+            overflow: hidden;
+
+            background:
+                rgba(30,41,59,.7);
+
+            border:
+                1px solid
+                rgba(255,255,255,.08);
+
+            transition: .25s;
+        }
+
+
+        .performance-card:hover {
+
+            transform:
+                translateY(-5px);
+
+            box-shadow:
+                0 15px 35px
+                rgba(0,0,0,.3);
+        }
+
+
+        .performance-icon {
+
+            font-size: 27px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .performance-title {
+
+            color: #94a3b8;
+
+            font-size: 12px;
+
+            font-weight: bold;
+
+            text-transform: uppercase;
+
+            letter-spacing: .6px;
+        }
+
+
+        .performance-value {
+
+            margin-top: 10px;
+
+            font-size: 27px;
+
+            font-weight: bold;
+        }
+
+
+        .performance-unit {
+
+            margin-top: 5px;
+
+            color: #64748b;
+
+            font-size: 12px;
+        }
+
+
+        .mae-card {
+
+            border-top:
+                3px solid #22c55e;
+        }
+
+
+        .mae-card .performance-value {
+
+            color: #4ade80;
+        }
+
+
+        .rmse-card {
+
+            border-top:
+                3px solid #38bdf8;
+        }
+
+
+        .rmse-card .performance-value {
+
+            color: #38bdf8;
+        }
+
+
+        .model-card {
+
+            border-top:
+                3px solid #a855f7;
+        }
+
+
+        .model-card .performance-value {
+
+            color: #c084fc;
+        }
+
+
+        .sample-card {
+
+            border-top:
+                3px solid #f59e0b;
+        }
+
+
+        .sample-card .performance-value {
+
+            color: #fbbf24;
+        }
+
+
+        .accuracy-card {
+
+            border-top:
+                3px solid #10b981;
+        }
+
+
+        .accuracy-card .performance-value {
+
+            color: #34d399;
+        }
+
+
+        .mape-card {
+
+            border-top:
+                3px solid #ef4444;
+        }
+
+
+        .mape-card .performance-value {
+
+            color: #f87171;
+        }
+
+
+        /* =====================================================
+           PERFORMANCE CHART
+        ===================================================== */
+
+        .performance-chart-container {
+
+            padding: 20px;
+
+            border-radius: 18px;
+
+            background:
+                rgba(2,6,23,.45);
+
+            border:
+                1px solid
+                rgba(255,255,255,.06);
+        }
+
+
+        .performance-chart-title {
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items: center;
+
+            margin-bottom: 15px;
+        }
+
+
+        .performance-chart-title h3 {
+
+            font-size: 17px;
+        }
+
+
+        .performance-chart-title span {
+
+            color: #94a3b8;
+
+            font-size: 12px;
+        }
+
+
+        .performance-chart-box {
+
+            height: 320px;
+        }
+
+
+        /* =====================================================
+           LOWER SECTION
+        ===================================================== */
+
+        .lower-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                2fr 1fr;
+
+            gap: 22px;
+
+            margin-top: 22px;
+        }
+
+
+        .meters {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3,1fr);
+
+            gap: 15px;
+        }
+
+
+        .meter {
+
+            padding: 20px;
+
+            border-radius: 18px;
+
+            background:
+                rgba(30,41,59,.65);
+        }
+
+
+        .meter h3 {
+
+            color: #cbd5e1;
+
+            font-size: 14px;
+        }
+
+
+        .meter-value {
+
+            font-size: 27px;
+
+            margin-top: 12px;
+
+            font-weight: bold;
+        }
+
+
+        .blue {
+
+            color: #38bdf8;
+        }
+
+
+        .green {
+
+            color: #4ade80;
+        }
+
+
+        .orange {
+
+            color: #fb923c;
+        }
+
+
+        .purple {
+
+            color: #c084fc;
+        }
+
+
+        /* =====================================================
+           SYSTEM INFO
+        ===================================================== */
+
+        .info-row {
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            padding: 14px 0;
+
+            border-bottom:
+                1px solid
+                rgba(255,255,255,.08);
+        }
+
+
+        .info-row:last-child {
+
+            border-bottom: none;
+        }
+
+
+        .info-label {
+
+            color: #94a3b8;
+        }
+
+
+        .info-value {
+
+            font-weight: bold;
+        }
+
+
+        /* =====================================================
+           BUTTONS
+        ===================================================== */
+
+        .controls {
+
+            display: flex;
+
+            gap: 12px;
+
+            margin-top: 22px;
+        }
+
+
+        button {
+
+            border: none;
+
+            border-radius: 12px;
+
+            padding:
+                13px 22px;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: .2s;
+        }
+
+
+        button:hover {
+
+            transform:
+                translateY(-2px);
+        }
+
+
+        .start {
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #16a34a,
+                    #22c55e
+                );
+
+            box-shadow:
+                0 8px 25px
+                rgba(34,197,94,.25);
+        }
+
+
+        .pause {
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #d97706,
+                    #f59e0b
+                );
+        }
+
+
+        .reset {
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #475569,
+                    #64748b
+                );
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        footer {
+
+            text-align: center;
+
+            margin-top: 30px;
+
+            color: #64748b;
+
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 1200px) {
+
+            .performance-cards {
+
+                grid-template-columns:
+                    repeat(3,1fr);
+            }
+        }
+
+
+        @media (max-width: 1000px) {
+
+            .cards {
+
+                grid-template-columns:
+                    repeat(2,1fr);
+            }
+
+
+            .lower-grid {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .performance-cards {
+
+                grid-template-columns:
+                    repeat(2,1fr);
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            header {
+
+                flex-direction: column;
+
+                align-items:
+                    flex-start;
+
+                gap: 15px;
+            }
+
+
+            .cards {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .meters {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .performance-cards {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .controls {
+
+                flex-direction:
+                    column;
+            }
+
+
+            .brand h1 {
+
+                font-size: 22px;
+            }
+
+
+            .performance-chart-title {
+
+                flex-direction:
+                    column;
+
+                align-items:
+                    flex-start;
+
+                gap: 8px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- =====================================================
+         HEADER
+    ===================================================== -->
+
+    <header>
+
+        <div class="brand">
+
+            <div class="logo">
+                ⚡
+            </div>
+
+            <div>
+
+                <h1>
+                    Smart Electricity AI
+                </h1>
+
+                <p>
+                    LSTM-Based Energy Forecasting Dashboard
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="status">
+
+            <span class="dot"></span>
+
+            <span id="statusText">
+                SIMULATION READY
+            </span>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN POWER CARDS
+    ===================================================== -->
+
+    <section class="cards">
+
+
+        <div class="card power">
+
+            <div class="card-title">
+                Current Power
+            </div>
+
+            <div class="icon">
+                ⚡
+            </div>
+
+            <div>
+
+                <span
+                    class="value"
+                    id="currentPower">
+                    --
+                </span>
+
+                <span class="unit">
+                    kW
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card prediction">
+
+            <div class="card-title">
+                Predicted Next Power
+            </div>
+
+            <div class="icon">
+                🔮
+            </div>
+
+            <div>
+
+                <span
+                    class="value"
+                    id="predictedPower">
+                    --
+                </span>
+
+                <span class="unit">
+                    kW
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card voltage">
+
+            <div class="card-title">
+                Voltage
+            </div>
+
+            <div class="icon">
+                🔌
+            </div>
+
+            <div>
+
+                <span
+                    class="value"
+                    id="voltage">
+                    --
+                </span>
+
+                <span class="unit">
+                    V
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card current">
+
+            <div class="card-title">
+                Current
+            </div>
+
+            <div class="icon">
+                💡
+            </div>
+
+            <div>
+
+                <span
+                    class="value"
+                    id="current">
+                    --
+                </span>
+
+                <span class="unit">
+                    A
+                </span>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- =====================================================
+         LIVE ELECTRICITY CHART
+    ===================================================== -->
+
+    <section class="panel">
+
+
+        <div class="panel-header">
+
+            <div>
+
+                <h2>
+                    📈 Live Electricity Consumption
+                </h2>
+
+                <p class="live-label">
+                    ● Updating from simulated smart-meter stream
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <strong id="timeDisplay">
+                    --:--:--
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="chart-box">
+
+            <canvas id="powerChart"></canvas>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- =====================================================
+         AI MODEL PERFORMANCE
+    ===================================================== -->
+
+    <section class="panel performance-panel">
+
+
+        <div class="panel-header">
+
+            <div>
+
+                <h2>
+                    🧠 AI Model Performance
+                </h2>
+
+                <p class="live-label">
+                    LSTM forecasting evaluation
+                </p>
+
+            </div>
+
+
+            <div class="performance-badge">
+
+                <span id="sampleBadge">
+                    Loading Samples...
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- PERFORMANCE CARDS -->
+
+        <div class="performance-cards">
+
+
+            <!-- MAE -->
+
+            <div class="performance-card mae-card">
+
+                <div class="performance-icon">
+                    🎯
+                </div>
+
+                <div class="performance-title">
+                    Mean Absolute Error
+                </div>
+
+                <div
+                    class="performance-value"
+                    id="mae">
+                    --
+                </div>
+
+                <div class="performance-unit">
+                    kW
+                </div>
+
+            </div>
+
+
+            <!-- RMSE -->
+
+            <div class="performance-card rmse-card">
+
+                <div class="performance-icon">
+                    📊
+                </div>
+
+                <div class="performance-title">
+                    Root Mean Square Error
+                </div>
+
+                <div
+                    class="performance-value"
+                    id="rmse">
+                    --
+                </div>
+
+                <div class="performance-unit">
+                    kW
+                </div>
+
+            </div>
+
+
+            <!-- MODEL -->
+
+            <div class="performance-card model-card">
+
+                <div class="performance-icon">
+                    🤖
+                </div>
+
+                <div class="performance-title">
+                    Deep Learning Model
+                </div>
+
+                <div class="performance-value">
+                    LSTM
+                </div>
+
+                <div class="performance-unit">
+                    24-step input window
+                </div>
+
+            </div>
+
+
+            <!-- SAMPLES -->
+
+            <div class="performance-card sample-card">
+
+                <div class="performance-icon">
+                    📚
+                </div>
+
+                <div class="performance-title">
+                    Evaluation Samples
+                </div>
+
+                <div
+                    class="performance-value"
+                    id="testSamples">
+                    --
+                </div>
+
+                <div class="performance-unit">
+                    samples
+                </div>
+
+            </div>
+
+
+            <!-- ACCURACY -->
+
+            <div class="performance-card accuracy-card">
+
+                <div class="performance-icon">
+                    ✅
+                </div>
+
+                <div class="performance-title">
+                    Prediction Accuracy
+                </div>
+
+                <div
+                    class="performance-value"
+                    id="accuracy">
+                    --
+                </div>
+
+                <div class="performance-unit">
+                    percent
+                </div>
+
+            </div>
+
+
+            <!-- MAPE -->
+
+            <div class="performance-card mape-card">
+
+                <div class="performance-icon">
+                    📉
+                </div>
+
+                <div class="performance-title">
+                    MAPE
+                </div>
+
+                <div
+                    class="performance-value"
+                    id="mape">
+                    --
+                </div>
+
+                <div class="performance-unit">
+                    percent
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =================================================
+             ACTUAL VS PREDICTED
+        ================================================= -->
+
+        <div class="performance-chart-container">
+
+
+            <div class="performance-chart-title">
+
+                <h3>
+                    📈 Actual vs Predicted Power
+                </h3>
+
+                <span id="performanceStatus">
+                    Loading model results...
+                </span>
+
+            </div>
+
+
+            <div class="performance-chart-box">
+
+                <canvas
+                    id="performanceChart">
+                </canvas>
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+    <!-- =====================================================
+         LOWER SECTION
+    ===================================================== -->
+
+    <div class="lower-grid">
+
+
+        <!-- SUB METERS -->
+
+        <section class="panel">
+
+
+            <div class="panel-header">
+
+                <h2>
+                    🏠 Energy Sub-Metering
+                </h2>
+
+            </div>
+
+
+            <div class="meters">
+
+
+                <div class="meter">
+
+                    <h3>
+                        Sub Meter 1
+                    </h3>
+
+                    <div
+                        class="meter-value blue">
+
+                        <span id="meter1">
+                            --
+                        </span>
+
+                        <span class="unit">
+                            kWh
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="meter">
+
+                    <h3>
+                        Sub Meter 2
+                    </h3>
+
+                    <div
+                        class="meter-value green">
+
+                        <span id="meter2">
+                            --
+                        </span>
+
+                        <span class="unit">
+                            kWh
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="meter">
+
+                    <h3>
+                        Sub Meter 3
+                    </h3>
+
+                    <div
+                        class="meter-value orange">
+
+                        <span id="meter3">
+                            --
+                        </span>
+
+                        <span class="unit">
+                            kWh
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- SYSTEM -->
+
+        <section class="panel">
+
+
+            <div class="panel-header">
+
+                <h2>
+                    🧠 AI System
+                </h2>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span class="info-label">
+                    Model
+                </span>
+
+                <span
+                    class="info-value purple"
+                    id="model">
+                    LSTM
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span class="info-label">
+                    Input Window
+                </span>
+
+                <span class="info-value">
+
+                    <span id="readings">
+                        24
+                    </span>
+
+                    readings
+
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span class="info-label">
+                    Data Source
+                </span>
+
+                <span class="info-value">
+                    Real Dataset
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span class="info-label">
+                    Timestamp
+                </span>
+
+                <span
+                    class="info-value"
+                    id="timestamp">
+                    --
+                </span>
+
+            </div>
+
+
+        </section>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         CONTROLS
+    ===================================================== -->
+
+    <div class="controls">
+
+
+        <button
+            class="start"
+            onclick="startSimulation()">
+
+            ▶ START LIVE
+
+        </button>
+
+
+        <button
+            class="pause"
+            onclick="pauseSimulation()">
+
+            ⏸ PAUSE
+
+        </button>
+
+
+        <button
+            class="reset"
+            onclick="resetSimulation()">
+
+            ↻ RESET
+
+        </button>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         FOOTER
+    ===================================================== -->
+
+    <footer>
+
+        Smart Electricity Forecasting
+        • Deep Learning LSTM
+        • Live Simulation
+
+    </footer>
+
+
+</div>
+
+
+<script>
+
+
+// =========================================================
+// LIVE POWER CHART
+// =========================================================
+
+
+const powerCanvas =
+    document
+        .getElementById("powerChart");
+
+
+const powerCtx =
+    powerCanvas.getContext("2d");
+
+
+const powerChart =
+    new Chart(
+        powerCtx,
+        {
+
+            type: "line",
+
+            data: {
+
+                labels: [],
+
+                datasets: [
+
+                    {
+
+                        label:
+                            "Current Power (kW)",
+
+                        data: [],
+
+                        borderWidth: 3,
+
+                        tension: 0.35,
+
+                        fill: true
+
+                    },
+
+
+                    {
+
+                        label:
+                            "Predicted Power (kW)",
+
+                        data: [],
+
+                        borderWidth: 2,
+
+                        borderDash:
+                            [6,6],
+
+                        tension: 0.35,
+
+                        fill: false
+
+                    }
+
+                ]
+
+            },
+
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio:
+                    false,
+
+                animation: {
+
+                    duration: 500
+
+                },
+
+
+                scales: {
+
+                    x: {
+
+                        ticks: {
+
+                            color:
+                                "#94a3b8"
+
+                        },
+
+                        grid: {
+
+                            color:
+                                "rgba(255,255,255,.05)"
+
+                        }
+
+                    },
+
+
+                    y: {
+
+                        title: {
+
+                            display: true,
+
+                            text:
+                                "Power (kW)",
+
+                            color:
+                                "#94a3b8"
+
+                        },
+
+                        ticks: {
+
+                            color:
+                                "#94a3b8"
+
+                        },
+
+                        grid: {
+
+                            color:
+                                "rgba(255,255,255,.05)"
+
+                        }
+
+                    }
+
+                },
+
+
+                plugins: {
+
+                    legend: {
+
+                        labels: {
+
+                            color:
+                                "#cbd5e1"
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+
+// =========================================================
+// SIMULATION VARIABLES
+// =========================================================
+
+
+let simulationTimer =
+    null;
+
+
+let running =
+    false;
+
+
+// =========================================================
+// UPDATE DASHBOARD
+// =========================================================
+
+
+async function updateDashboard() {
+
+    try {
+
+        const response =
+            await fetch("/api/live");
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok ||
+            !data.success) {
+
+            throw new Error(
+                data.error ||
+                "API error"
+            );
+
+        }
+
+
+        // ---------------------------------------------
+        // POWER
+        // ---------------------------------------------
+
+        document
+            .getElementById(
+                "currentPower"
+            )
+            .textContent =
+                Number(
+                    data.current_power
+                ).toFixed(3);
+
+
+        document
+            .getElementById(
+                "predictedPower"
+            )
+            .textContent =
+                Number(
+                    data.predicted_power
+                ).toFixed(3);
+
+
+        // ---------------------------------------------
+        // ELECTRICAL VALUES
+        // ---------------------------------------------
+
+        document
+            .getElementById(
+                "voltage"
+            )
+            .textContent =
+                Number(
+                    data.voltage
+                ).toFixed(2);
+
+
+        document
+            .getElementById(
+                "current"
+            )
+            .textContent =
+                Number(
+                    data.current
+                ).toFixed(2);
+
+
+        // ---------------------------------------------
+        // SUB METERS
+        // ---------------------------------------------
+
+        document
+            .getElementById(
+                "meter1"
+            )
+            .textContent =
+                Number(
+                    data.sub_meter_1
+                ).toFixed(2);
+
+
+        document
+            .getElementById(
+                "meter2"
+            )
+            .textContent =
+                Number(
+                    data.sub_meter_2
+                ).toFixed(2);
+
+
+        document
+            .getElementById(
+                "meter3"
+            )
+            .textContent =
+                Number(
+                    data.sub_meter_3
+                ).toFixed(2);
+
+
+        // ---------------------------------------------
+        // SYSTEM
+        // ---------------------------------------------
+
+        document
+            .getElementById(
+                "readings"
+            )
+            .textContent =
+                data.readings_used;
+
+
+        document
+            .getElementById(
+                "model"
+            )
+            .textContent =
+                data.model;
+
+
+        document
+            .getElementById(
+                "timestamp"
+            )
+            .textContent =
+                data.timestamp;
+
+
+        // ---------------------------------------------
+        // STATUS
+        // ---------------------------------------------
+
+        document
+            .getElementById(
+                "statusText"
+            )
+            .textContent =
+                data.status;
+
+
+        // ---------------------------------------------
+        // TIME
+        // ---------------------------------------------
+
+        const parts =
+            data.timestamp.split(" ");
+
+
+        if (parts.length > 1) {
+
+            document
+                .getElementById(
+                    "timeDisplay"
+                )
+                .textContent =
+                    parts[1];
+
+        }
+
+
+        // ---------------------------------------------
+        // GRAPH
+        // ---------------------------------------------
+
+        const shortTime =
+            parts.length > 1
+                ? parts[1]
+                : data.timestamp;
+
+
+        powerChart
+            .data
+            .labels
+            .push(shortTime);
+
+
+        powerChart
+            .data
+            .datasets[0]
+            .data
+            .push(
+                data.current_power
+            );
+
+
+        powerChart
+            .data
+            .datasets[1]
+            .data
+            .push(
+                data.predicted_power
+            );
+
+
+        // Keep latest 30 points
+
+        if (
+            powerChart
+                .data
+                .labels
+                .length > 30
+        ) {
+
+            powerChart
+                .data
+                .labels
+                .shift();
+
+
+            powerChart
+                .data
+                .datasets[0]
+                .data
+                .shift();
+
+
+            powerChart
+                .data
+                .datasets[1]
+                .data
+                .shift();
+
+        }
+
+
+        powerChart.update();
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Connection error:",
+            error
+        );
+
+
+        document
+            .getElementById(
+                "statusText"
+            )
+            .textContent =
+                "SERVER OFFLINE";
+
+    }
+
+}
+
+
+// =========================================================
+// START SIMULATION
+// =========================================================
+
+
+function startSimulation() {
+
+    if (running) {
+
+        return;
+
+    }
+
+
+    running =
+        true;
+
+
+    document
+        .getElementById(
+            "statusText"
+        )
+        .textContent =
+            "LIVE SIMULATION";
+
+
+    updateDashboard();
+
+
+    simulationTimer =
+        setInterval(
+            updateDashboard,
+            5000
+        );
+
+}
+
+
+// =========================================================
+// PAUSE SIMULATION
+// =========================================================
+
+
+function pauseSimulation() {
+
+    running =
+        false;
+
+
+    if (simulationTimer) {
+
+        clearInterval(
+            simulationTimer
+        );
+
+        simulationTimer =
+            null;
+
+    }
+
+
+    document
+        .getElementById(
+            "statusText"
+        )
+        .textContent =
+            "PAUSED";
+
+}
+
+
+// =========================================================
+// RESET SIMULATION
+// =========================================================
+
+
+async function resetSimulation() {
+
+    pauseSimulation();
+
+
+    try {
+
+        await fetch(
+            "/api/reset"
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Reset error:",
+            error
+        );
+
+    }
+
+
+    powerChart.data.labels =
+        [];
+
+
+    powerChart
+        .data
+        .datasets[0]
+        .data =
+            [];
+
+
+    powerChart
+        .data
+        .datasets[1]
+        .data =
+            [];
+
+
+    powerChart.update();
+
+
+    document
+        .getElementById(
+            "currentPower"
+        )
+        .textContent =
+            "--";
+
+
+    document
+        .getElementById(
+            "predictedPower"
+        )
+        .textContent =
+            "--";
+
+
+    document
+        .getElementById(
+            "statusText"
+        )
+        .textContent =
+            "RESET COMPLETE";
+
+}
+
+
+// =========================================================
+// PERFORMANCE CHART
+// =========================================================
+
+
+let performanceChart =
+    null;
+
+
+// =========================================================
+// LOAD MODEL PERFORMANCE
+// =========================================================
+
+
+async function loadPerformance() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/performance"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok ||
+            !data.success) {
+
+            throw new Error(
+                data.error ||
+                "Performance data unavailable"
+            );
+
+        }
+
+
+        // ---------------------------------------------
+        // MAE
+        // ---------------------------------------------
+
+        document
+            .getElementById(
+                "mae"
+            )
+            .textContent =
+                Number(
+                    data.mae
+                ).toFixed(4);
+
+
+        // ---------------------------------------------
+        // RMSE
+        // ---------------------------------------------
+
+        document
+            .getElementById(
+                "rmse"
+            )
+            .textContent =
+                Number(
+                    data.rmse
+                ).toFixed(4);
+
+
+        // ---------------------------------------------
+        // TEST SAMPLES
+        // ---------------------------------------------
+
+        document
+            .getElementById(
+                "testSamples"
+            )
+            .textContent =
+                data.test_samples;
+
+
+        document
+            .getElementById(
+                "sampleBadge"
+            )
+            .textContent =
+                Number(
+                    data.test_samples
+                ).toLocaleString()
+                + " Test Samples";
+
+
+        // ---------------------------------------------
+        // MAPE
+        // ---------------------------------------------
+
+        let mape =
+            null;
+
+
+        if (
+            Array.isArray(data.actual) &&
+            Array.isArray(data.predicted)
+        ) {
+
+            let totalPercentage =
+                0;
+
+            let validCount =
+                0;
+
+
+            for (
+                let i = 0;
+                i < data.actual.length;
+                i++
+            ) {
+
+                const actual =
+                    Number(
+                        data.actual[i]
+                    );
+
+
+                const predicted =
+                    Number(
+                        data.predicted[i]
+                    );
+
+
+                if (
+                    actual !== 0 &&
+                    Number.isFinite(actual) &&
+                    Number.isFinite(predicted)
+                ) {
+
+                    totalPercentage +=
+                        Math.abs(
+                            (
+                                actual -
+                                predicted
+                            ) /
+                            actual
+                        ) * 100;
+
+
+                    validCount++;
+
+                }
+
+            }
+
+
+            if (validCount > 0) {
+
+                mape =
+                    totalPercentage /
+                    validCount;
+
+            }
+
+        }
+
+
+        if (mape !== null) {
+
+            document
+                .getElementById(
+                    "mape"
+                )
+                .textContent =
+                    mape.toFixed(2) + "%";
+
+        }
+
+        else {
+
+            document
+                .getElementById(
+                    "mape"
+                )
+                .textContent =
+                    "N/A";
+
+        }
+
+
+        // ---------------------------------------------
+        // ACCURACY
+        // ---------------------------------------------
+        //
+        // Simple presentation metric:
+        // Accuracy = 100 - MAPE
+        //
+        // This is displayed as a dashboard
+        // indicator, not classification accuracy.
+        // ---------------------------------------------
+
+        if (mape !== null) {
+
+            let accuracy =
+                100 - mape;
+
+
+            if (accuracy < 0) {
+
+                accuracy =
+                    0;
+
+            }
+
+
+            if (accuracy > 100) {
+
+                accuracy =
+                    100;
+
+            }
+
+
+            document
+                .getElementById(
+                    "accuracy"
+                )
+                .textContent =
+                    accuracy.toFixed(2)
+                    + "%";
+
+        }
+
+        else {
+
+            document
+                .getElementById(
+                    "accuracy"
+                )
+                .textContent =
+                    "N/A";
+
+        }
+
+
+        // ---------------------------------------------
+        // STATUS
+        // ---------------------------------------------
+
+        document
+            .getElementById(
+                "performanceStatus"
+            )
+            .textContent =
+                "LSTM evaluation loaded successfully";
+
+
+        // ---------------------------------------------
+        // PERFORMANCE CHART
+        // ---------------------------------------------
+
+        const canvas =
+            document
+                .getElementById(
+                    "performanceChart"
+                );
+
+
+        if (!canvas) {
+
+            console.error(
+                "Performance chart not found"
+            );
+
+            return;
+
+        }
+
+
+        const ctx =
+            canvas.getContext(
+                "2d"
+            );
+
+
+        // Destroy previous chart
+
+        if (performanceChart) {
+
+            performanceChart.destroy();
+
+        }
+
+
+        const labels =
+            data.actual.map(
+                (_, index) =>
+                    index + 1
+            );
+
+
+        performanceChart =
+            new Chart(
+                ctx,
+                {
+
+                    type: "line",
+
+
+                    data: {
+
+                        labels:
+                            labels,
+
+                        datasets: [
+
+                            {
+
+                                label:
+                                    "Actual Power (kW)",
+
+                                data:
+                                    data.actual,
+
+                                borderWidth:
+                                    2,
+
+                                tension:
+                                    0.3,
+
+                                pointRadius:
+                                    0,
+
+                                fill:
+                                    false
+
+                            },
+
+
+                            {
+
+                                label:
+                                    "LSTM Predicted Power (kW)",
+
+                                data:
+                                    data.predicted,
+
+                                borderWidth:
+                                    2,
+
+                                borderDash:
+                                    [6,6],
+
+                                tension:
+                                    0.3,
+
+                                pointRadius:
+                                    0,
+
+                                fill:
+                                    false
+
+                            }
+
+                        ]
+
+                    },
+
+
+                    options: {
+
+                        responsive:
+                            true,
+
+                        maintainAspectRatio:
+                            false,
+
+
+                        interaction: {
+
+                            intersect:
+                                false,
+
+                            mode:
+                                "index"
+
+                        },
+
+
+                        scales: {
+
+                            x: {
+
+                                title: {
+
+                                    display:
+                                        true,
+
+                                    text:
+                                        "Test Sample",
+
+                                    color:
+                                        "#94a3b8"
+
+                                },
+
+                                ticks: {
+
+                                    color:
+                                        "#94a3b8",
+
+                                    maxTicksLimit:
+                                        15
+
+                                },
+
+                                grid: {
+
+                                    color:
+                                        "rgba(255,255,255,.05)"
+
+                                }
+
+                            },
+
+
+                            y: {
+
+                                title: {
+
+                                    display:
+                                        true,
+
+                                    text:
+                                        "Power (kW)",
+
+                                    color:
+                                        "#94a3b8"
+
+                                },
+
+                                ticks: {
+
+                                    color:
+                                        "#94a3b8"
+
+                                },
+
+                                grid: {
+
+                                    color:
+                                        "rgba(255,255,255,.05)"
+
+                                }
+
+                            }
+
+                        },
+
+
+                        plugins: {
+
+                            legend: {
+
+                                labels: {
+
+                                    color:
+                                        "#cbd5e1"
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+            );
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Performance loading error:",
+            error
+        );
+
+
+        document
+            .getElementById(
+                "performanceStatus"
+            )
+            .textContent =
+                "Unable to load model performance";
+
+
+        document
+            .getElementById(
+                "mae"
+            )
+            .textContent =
+                "--";
+
+
+        document
+            .getElementById(
+                "rmse"
+            )
+            .textContent =
+                "--";
+
+
+        document
+            .getElementById(
+                "accuracy"
+            )
+            .textContent =
+                "--";
+
+
+        document
+            .getElementById(
+                "mape"
+            )
+            .textContent =
+                "--";
+
+    }
+
+}
+
+
+// =========================================================
+// LOAD PERFORMANCE WHEN PAGE OPENS
+// =========================================================
+
+
+loadPerformance();
+
+
+</script>
+
+
+</body>
+
+</html>
