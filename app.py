@@ -8,8 +8,20 @@ app = Flask(__name__)
 # FILE PATHS
 # ============================================================
 
-DATA_PATH = "data/household_power_consumption.txt"
-RESULTS_PATH = "model_evaluation_results.csv"
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+DATA_PATH = os.path.join(
+    BASE_DIR,
+    "data",
+    "household_power_consumption.txt"
+)
+
+RESULTS_PATH = os.path.join(
+    BASE_DIR,
+    "model_evaluation_results.csv"
+)
 
 # ============================================================
 # MODEL INFORMATION
